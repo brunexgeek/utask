@@ -72,12 +72,12 @@ int utask_run();
 int utask_yield();
 
 /**
- * Return the current task identifier.
+ * Returns the current task identifier.
  */
 int utask_id();
 
 /**
- * Return the number of tasks in runnable state.
+ * Returns the number of tasks in runnable state.
  */
 int utask_count();
 
