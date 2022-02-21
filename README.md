@@ -42,7 +42,7 @@ utask_terminate();
 
 ## API
 
-**utask_initialize**
+### utask_initialize
 
 `int utask_initialize( int max, int stack_size, int flags )`
 
@@ -54,7 +54,7 @@ for each thread to initialize its task scheduler.
 
 This function must be called outside a task.
 
-**utask_terminate**
+### utask_terminate
 
 `int utask_terminate()`
 
@@ -62,7 +62,7 @@ Terminate the task scheduler for the current thread.
 
 This function must be called outside a task.
 
-**utask_create**
+### utask_create
 
 `int utask_create(void (*func)(void*), void *arg)`
 
@@ -70,7 +70,7 @@ Create a new task and add it in the task scheduler's running queue. The return v
 
 This function can be called inside and outside a task.
 
-**utask_run**
+### utask_run
 
 `int utask_run()`
 
@@ -78,25 +78,25 @@ Run the task scheduler until all tasks are completed.
 
 Tasks are selected via round-robin algorithm.
 
-**utask_yield**
+### utask_yield
 
 `int utask_yield()`
 
 Relinquish control and enables the task scheduler run another task.
 
-**utask_id**
+### utask_id
 
 `int utask_id()`
 
 Returns the current task identifier.
 
-**utask_count**
+### utask_count
 
 `int utask_count()`
 
 Returns the number of tasks in runnable state.
 
-**utask_info**
+### utask_info
 
 `int utask_info( utask_info_t *info )`
 
