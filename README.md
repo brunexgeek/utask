@@ -1,11 +1,10 @@
 # utask: userspace cooperative mutitasking
 
-
-`utask` is a single file library implementing userspace cooperative multitasking inside native threads. Tasks have many-to-one relantionship with native threads (i.e. each thread has its own tasks) and you can create up to 64 tasks per thread.
+`utask` is a single file library implementing userspace cooperative multitasking inside native threads. Tasks have many-to-one relantionship with native threads (i.e. each thread has its own tasks) and you can create up to 128 tasks per thread.
 
 By default, `utask` can be used only by one thread. If you want to use it in more threads, define `UTASK_MULTI_THREAD` before including `utask.h`. Defining `UTASK_MULTI_THREAD` incurs additional overhead to retrieve per thread internal information.
 
-This library requires [ucontext](https://pubs.opengroup.org/onlinepubs/7908799/xsh/ucontext.h.html) API provided by GNU/Linux.
+This library requires [ucontext](https://pubs.opengroup.org/onlinepubs/7908799/xsh/ucontext.h.html) API provided by GNU/Linux and some other operating systems.
 
 ## Usage
 
@@ -17,7 +16,7 @@ Include `utask.h` in your project. You can include `utask.h` in any source file,
 #include "utask.h"
 ```
 
-Before using any function you must initialize the task scheduler in the current thread with `utask_initialize`. Always check the return value for errors.
+Before using any function you must initialize the task scheduler in the current thread with `utask_initialize`. The default number of tasks is 8 and the default stack size is 16 KiB. Always check the return value for errors.
 
 ```
 int result = utask_initialize(2, UT_DEFAULT, UT_DEFAULT);
@@ -25,7 +24,7 @@ if (result != UT_EOK)
     abort("Failure");
 ```
 
-Now just create some tasks and start the task scheduler to run them. The function `utask_run` will block the execution until all tasks are finished. Make sure that inside `my_function_1` and `my_function_2` you call `utask_yield` regularly to give up processor time to other tasks.
+Now just create some tasks and start the task scheduler to run them. The function `utask_run` will block the execution until all tasks are finished. Make sure that inside `my_function_1` and `my_function_2` you call `utask_yield` regularly to give up processor time to other tasks. You can also create tasks inside other tasks.
 
 ```
 utask_create(my_function_1, NULL);
@@ -101,3 +100,7 @@ Returns the number of tasks in runnable state.
 `int utask_info( utask_info_t *info )`
 
 Returns information about the task scheduler state.
+
+# Stack size
+
+There is no simple and portable way to accurately check for stack overflows. Furthermore, the task stack does not grow as needed, as operating systems usually do with threads. The library attempts to perform rudimentary validations to detect possible stack overflows, but this is not sufficient to ensure execution stability (especially if the call graph is deep). Be sure to test your application to verify that the specified stack size is sufficient for various use cases.
