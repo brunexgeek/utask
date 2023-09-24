@@ -40,6 +40,8 @@ extern "C" {
  * for each thread to initialize its task scheduler.
  *
  * This function must be called outside a task.
+ *
+ * @return Error code or zero on success.
  */
 int utask_initialize( int max, int stack_size, int flags );
 
@@ -47,6 +49,8 @@ int utask_initialize( int max, int stack_size, int flags );
  * Terminate the task scheduler for the current thread.
  *
  * This function must be called outside a task.
+ *
+ * @return Error code or zero on success.
  */
 int utask_terminate();
 
@@ -55,7 +59,7 @@ int utask_terminate();
  *
  * This function can be called inside and outside a task.
  *
- * @return Task identifier (same value returned by 'utask_id' function).
+ * @return Task identifier (same value returned by 'utask_id' function) or error code if fail.
  */
 int utask_create(void (*func)(void*), void *arg);
 
@@ -63,21 +67,29 @@ int utask_create(void (*func)(void*), void *arg);
  * Run the task scheduler until all tasks are completed.
  *
  * Tasks are selected via round-robin algorithm.
+ *
+ * @return Error code or zero on success.
  */
 int utask_run();
 
 /**
  * Relinquish control and enables the task scheduler run another task.
+ *
+ * @return Number of tasks executed before resuming execution of this task.
  */
 int utask_yield();
 
 /**
  * Return the current task identifier.
+ *
+ * @return Task identifier
  */
 int utask_id();
 
 /**
  * Return the number of tasks in runnable state.
+ *
+ * @return Number of tasks.
  */
 int utask_count();
 
@@ -116,6 +128,11 @@ int utask_info( utask_info_t *info );
 #define ST_CREATED 1
 #define ST_RUNNING 2
 #define ST_DONE    3
+
+#define NUM_TASKS_DEFAULT  8
+#define NUM_TASKS_MAX      128
+
+#define DEFAULT_STACK      (16 * 1024)
 
 typedef struct utask
 {
@@ -231,11 +248,11 @@ int utask_initialize( int max, int stack_size, int flags )
 {
     (void) flags;
     if (stack_size <= 0)
-        stack_size = 16 * 1024;
+        stack_size = DEFAULT_STACK;
     if (max <= 0)
-        max = 16;
+        max = NUM_TASKS_DEFAULT;
     else
-    if (max > 64)
+    if (max > NUM_TASKS_MAX)
         return UT_EMANY;
 
     uscheduler_t *sc = prepare_scheduler();

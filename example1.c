@@ -40,6 +40,7 @@ int main(int argc, char **argv)
 {
 	(void) argc;
 	(void) argv;
+
 	utask_initialize(UT_DEFAULT, UT_DEFAULT, UT_DEFAULT);
 	create_test_task("Alfa", 2);
 	create_test_task("Beta", 5);
